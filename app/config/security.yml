@@ -1,0 +1,52 @@
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/book/security.html
+security:
+    encoders:
+        Synergy\WebBundle\Entity\User:
+            algorithm: md5
+            encode_as_base64: false
+            iterations: 0
+    
+    
+    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
+    providers:
+        our_db_provider:
+            entity:
+                class: SynergyWebBundle:User
+                property: username
+
+    firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            anonymous: ~
+            # activate different ways to authenticate
+
+            http_basic: ~
+            # http://symfony.com/doc/current/book/security.html#a-configuring-how-your-users-will-authenticate
+
+            provider: our_db_provider
+            
+            form_login: 
+                login_path: /login
+                check_path: /login_check
+                default_target_path: /admin/home
+            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+            
+            remember_me:
+                key:      "%secret%"
+                lifetime: 604800 
+                # 1 week in seconds
+                path: /
+                
+            logout:
+                path: /logout
+                target: /login
+               
+    access_control:
+        # this is a catch-all for the admin area
+        # additional security lives in the controllers
+        - { path: ^/admin, roles: ROLE_ADMIN }

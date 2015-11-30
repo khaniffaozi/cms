@@ -1,0 +1,67 @@
+web_login:
+    path:     /login
+    defaults: { _controller: SynergyWebBundle:Security:login }
+web_login_check:
+    path:     /login_check
+    defaults: { _controller: SynergyWebBundle:Security:loginCheck }
+web_logout:
+    path:     /logout
+web_homepage:
+    path:     /admin/home
+    defaults: { _controller: SynergyWebBundle:Default:index }
+web_goto_homepage:
+    path:     /goto
+    defaults: { _controller: SynergyWebBundle:Default:goToWeb }
+web_job:
+    path:     /admin/job
+    defaults: { _controller: SynergyWebBundle:Job:index }    
+web_job_list:
+    path:     /admin/job/list
+    defaults: { _controller: SynergyWebBundle:Job:list }
+web_job_list_detail:
+    path:     /admin/job/list/{id}
+    defaults: { _controller: SynergyWebBundle:Job:list }
+web_job_save:
+    path:     /admin/job/save/{id}
+    defaults: { _controller: SynergyWebBundle:Job:save }
+    methods: [POST] 
+web_job_delete:
+    path:     /admin/job/delete/{id}
+    defaults: { _controller: SynergyWebBundle:Job:delete }
+web_job_form:
+    path:     /admin/job/add
+    defaults: { _controller: SynergyWebBundle:Job:form }
+web_job_form_edit:
+    path:     /admin/job/edit/{id}
+    defaults: { _controller: SynergyWebBundle:Job:form }
+web_job_json:
+    path:     /job/listjson
+    defaults: { _controller: SynergyWebBundle:Job:findAll }    
+web_user:
+    path:     /admin/user
+    defaults: { _controller: SynergyWebBundle:User:index }
+web_user_list:
+    path:     /admin/user/list
+    defaults: { _controller: SynergyWebBundle:User:list }
+web_user_form:
+    path:     /admin/user/add
+    defaults: { _controller: SynergyWebBundle:User:form }
+web_user_form_edit:
+    path:     /admin/user/edit/{id}
+    defaults: { _controller: SynergyWebBundle:User:form }
+web_user_save:
+    path:     /admin/user/save/{id}
+    defaults: { _controller: SynergyWebBundle:User:save }
+    methods: [POST] 
+web_user_delete:
+    path:     /admin/user/delete/{id}
+    defaults: { _controller: SynergyWebBundle:User:delete }
+web_security_change_password:
+    path:     /admin/changepass
+    defaults: { _controller: SynergyWebBundle:Security:changePassword }
+web_security_save_change:
+    path:     /admin/savechange
+    defaults: { _controller: SynergyWebBundle:Security:saveChange }
+user_registration:
+    path:     /register
+    defaults: { _controller: SynergyWebBundle:Registration:register }

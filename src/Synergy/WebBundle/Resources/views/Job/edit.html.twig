@@ -1,0 +1,217 @@
+{% extends 'SynergyWebBundle:Layout:menu.html.twig' %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}" />
+<link rel="stylesheet" href="{{ asset('assets/css/font-awesome.min.css') }}" />
+<link rel="stylesheet" href="{{ asset('assets/css/bootstrap-datetimepicker.css') }}" />
+<script src="{{ asset('assets/js/jquery-1.3.2.min.js') }}"></script>
+<script src="{{ asset('assets/js/jquery-ui-1.7.1.custom.min.js') }}"></script>
+<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+<script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('assets/js/clone.js') }}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+          jQuery.noConflict();
+          $("#responsibilities-list").sortable({
+            handle : '.handle'
+          });
+          $("#required-list").sortable({
+            handle : '.handle'
+          });
+          $("#desirable-list").sortable({
+            handle : '.handle'
+          });
+    });
+</script>
+{% endblock %}
+
+{% block web_breadcrumb %}
+<ol class="breadcrumb">
+    <li class="active"><a href="{{path('web_homepage')}}">Home</a></li>
+    <li class="active"><a href="{{path('web_job')}}">Job List</a></li>
+    <li class="active">Add</li>
+</ol>
+{% endblock %}
+
+{% block web_body %}
+<div class="row">
+    <div class="col-md-12">
+        <form class="form" action="{{ path('web_job_save',{'id' : job.id?:0})}}" method="POST" id="jobForm">
+            <legend>Add new job vacancy</legend>
+            <fieldset>
+                <div class="row">
+                    <div class="col-md-6 ">
+                        <div class="form-group col-md-12">
+                            <label for="title">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" value="{{job.title}}" placeholder="Example: Junior Web Programmer (IT Department)" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="isPublish">Status</label>
+                            <div class="row">
+                                <div class="col-md-12 ">
+                                <select class="form-control" id="isPublish" name="isPublish">
+                                {% for val in status %}
+                                    {% if val.value ==  job.isPublish%}
+                                            <option value="{{ val.value }}" selected>{{ val.lable }}</option>
+                                    {% else %}
+                                            <option value="{{ val.value }}">{{ val.lable }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                                </select>
+                                </div>
+                            </div>
+                        </div>  
+                        <div class="form-group col-md-6">
+                            <label for="isPublish">Country {{ app.security.getToken().getUser().getCountry() }}</label>
+                            <div class="row">
+                                <div class="col-md-12 ">
+                                {% if app.security.getToken().getUser().getCountry() == 'All'%}
+                                    <select class="form-control" id="userType" name="country">
+                                    {% for val in country %}
+                                        {% if job.id == ""%}
+                                            {% if val == app.security.getToken().getUser().getCountry()%}
+                                            <option value="{{val}}" selected>{{val}}</option>
+                                            {% else %}
+                                            <option value="{{val}}">{{val}}</option>
+                                            {% endif %}                                    
+                                        {% else %}
+                                            {% if val ==  job.country%}
+                                            <option value="{{val}}" selected>{{val}}</option>
+                                            {% else %}
+                                            <option value="{{val}}">{{val}}</option>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <select class="form-control" id="userType" name="country" readonly>
+                                        <option value="{{app.security.getToken().getUser().getCountry()}}" selected>{{app.security.getToken().getUser().getCountry()}}</option>
+                                    </select>
+                                {% endif %}
+                                </div>
+                            </div>
+                        </div>   
+                        <div class="form-group col-md-12">
+                            <label for="dtp_input2" class="control-label" required>Valid Until</label>
+                            <div class="input-group date form_date col-md-6" data-date="" data-date-format="dd-mm-yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                                <input class="form-control" size="16" type="text" id="validUntil" name="validUntil" value="{{job.validUntil}}" readonly>
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                            </div>
+                            <input type="hidden" id="dtp_input2" value="" /><br/>
+                        </div>    
+                    </div>
+                    <div class="col-md-6 ">
+                        <!-- Input Responsibilities -->
+                        <label class="control-label" for="responsibilities">Responsibilities:</label>                
+                        <div class="form-group col-md-12 well" id="responsibilities-list">
+                            <div class="form-responsibilities" >
+                                <button type="button" class="btn btn-success add-responsibilities" >
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add
+                                </button><br><br>
+                            </div>
+                            {% for val in responsibilities %}
+                            <div class="form-responsibilities">
+                                <div class="input-group">
+                                    <span class="input-group-addon"  style="cursor:pointer"><i class="glyphicon glyphicon-move handle" ></i></span>
+                                    <textarea id="responsibilities{{ loop.index }}" name="responsibilities[]" type="text" class="form-control" rows="3">{{val.description}}</textarea>
+                                    <span class="input-group-addon btn btn-danger remove-responsibilities"><i class="glyphicon glyphicon-remove"></i></span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <div class="form-responsibilities">
+                                <div class="input-group">
+                                    <span class="input-group-addon"  style="cursor:pointer"><i class="glyphicon glyphicon-move handle" ></i></span>
+                                    <textarea id="responsibilities" name="responsibilities[]" type="text" class="form-control" rows="3"></textarea>
+                                    <span class="input-group-addon btn btn-danger remove-responsibilities"><i class="glyphicon glyphicon-remove"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <!-- Input Required -->
+                    <div class="col-md-6">
+                        <label class="control-label" for="required">Skills and Qualifications:<br>Required:</label>                
+                        <div class="form-group col-md-12 well" id="required-list">
+                            <div class="form-required" >
+                                <button type="button" class="btn btn-success add-required" >
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add
+                                </button><br><br>
+                            </div>
+                            {% for val in required %}
+                            <div class="form-required">
+                                <div class="input-group">
+                                    <span class="input-group-addon"  style="cursor:pointer"><i class="glyphicon glyphicon-move handle" ></i></span>
+                                    <textarea id="required{{ loop.index }}" name="required[]" type="text" class="form-control" rows="3">{{val.description}}</textarea>
+                                    <span class="input-group-addon btn btn-danger remove-required"><i class="glyphicon glyphicon-remove"></i></span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <div class="form-required">
+                                <div class="input-group">
+                                    <span class="input-group-addon"  style="cursor:pointer"><i class="glyphicon glyphicon-move handle" ></i></span>
+                                    <textarea id="required" name="required[]" type="text" class="form-control" rows="3"></textarea>
+                                    <span class="input-group-addon btn btn-danger remove-required"><i class="glyphicon glyphicon-remove"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Input Desirable -->
+                    <div class="col-md-6 ">  
+                        <label class="control-label" for="desirable"><br>Desirable:</label>                
+                        <div class="form-group col-md-12 well" id="desirable-list">
+                            <div class="form-desirable" >
+                                <button type="button" class="btn btn-success add-desirable" >
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add
+                                </button><br><br>
+                            </div>
+                            {% for val in desirable %}
+                            <div class="form-desirable">
+                                <div class="input-group">
+                                    <span class="input-group-addon"  style="cursor:pointer"><i class="glyphicon glyphicon-move handle" ></i></span>
+                                    <textarea id="desirable{{ loop.index }}" name="desirable[]" type="text" class="form-control" rows="3">{{val.description}}</textarea>
+                                    <span class="input-group-addon btn btn-danger remove-desirable"><i class="glyphicon glyphicon-remove"></i></span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <div class="form-desirable">
+                                <div class="input-group">
+                                    <span class="input-group-addon"  style="cursor:pointer"><i class="glyphicon glyphicon-move handle" ></i></span>
+                                    <textarea id="desirable" name="desirable[]" type="text" class="form-control" rows="3"></textarea>
+                                    <span class="input-group-addon btn btn-danger remove-desirable"><i class="glyphicon glyphicon-remove"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12"> 
+                        <div class="form-group">
+                            <p>
+                                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-floppy-save"></i> Save</button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>        
+    </div>
+</div>
+{% endblock %}
+{% block javascripts %}
+<script src="{{ asset('assets/js/bootstrap-datetimepicker.js') }}"></script>
+<script type="text/javascript">
+    $('.form_date').datetimepicker({
+        //language:  'fr',
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0
+    });
+</script>
+{% endblock %}
+
